@@ -1,0 +1,7 @@
+ec2-user@ip-172-31-31-92 ~]$ aws s3 cp test.txt s3://ce-bootcamp-m2-05-hafiz
+upload: ./test.txt to s3://ce-bootcamp-m2-05-hafiz/test.txt       
+[ec2-user@ip-172-31-31-92 ~]$ aws s3 cp test.txt s3://ce-bootcamp-m2-05-hafiz
+upload: ./test.txt to s3://ce-bootcamp-m2-05-hafiz/test.txt       
+[ec2-user@ip-172-31-31-92 ~]$ aws s3 cp s3://ce-bootcamp-m2-05-hafiz/test.txt -
+written by an IAM role, no keys involved
+[ec2-user@ip-172-31-31-92 ~]$ 

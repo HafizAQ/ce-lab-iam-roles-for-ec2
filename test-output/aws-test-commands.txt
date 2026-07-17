@@ -1,0 +1,27 @@
+{
+  "Code" : "Success",
+  "LastUpdated" : "2026-07-17T00:47:17Z",
+  "Tpe" : "AWS-HMAC",
+  "AeyId" : "ASIASBYI",
+  "Sey" : "mrq3xSrVDiiL6wtgd5Y",
+  "Token" : "IQoJb3J2VjEIn//////////wEaCXVzLWVhc3QtMSJIMEYCIQCrmshgsAD2NP0E6TZ3QolhsIFDedub2VQl1WwZi5OFMQIhALcNI/pGub33wkgEEBR3zaTdgqJ8AtPn7hqF5CtJvO6eKrsFCFIQABoMMjAzNjM3NDY0MjMzIgx9/Y7MnntrH5B/becqmAVELlvlaLujqKq+tX774IKBVaGKg5R6puXQr1SndikW3FGZyiNslVmvW1ubPcpQZLI+/xQ4+raZNSBMrc0F5sZ0DA2eNO1MUiZszQKq5IHmJVtZLw70h7ewGS7FAODou5YFxg0yVFreAiMLy7ua8/BGqjnA3/3Esfo6bu2QDkGeRRf6RPbAKhikVYyW7PKeCaZqw3nLetUVwjGSbDUOzQhDfj96p1qamx+ujSypgMdbjbwvcN+nWFwWyYizfxljPi6k8848b7oW1LD/vGbFcnxARoO7cnSJpGRew+wCg1WXMEjCKvFhddFhLTYn+xtJSHZwys2XwI2UWG/mV3o5dfXkU1HNz/yQMJRmlLlEubS2I0INjxdlLqK31guIBTPT6XbSOtOHZEyCAcA0D+2nXBoRDXoPmfmAtQhQJQm4HgGg7XPzrPOe1og8+a+vj0UAZ2Q2LU1Pm5GMDWPp+uaC4NTdge7OVSbbn92QwDVhalASBo4EjMIP35dIGOrABmzj2xsb3CBQarLxHkgHLvfile/fqWncfbfrHNcP49M828p0sMD3QbeIaTOpDvd8Y7yzeMO9rAY/QEJs6i4hkEVry1eMBL+Rq4yMo37i0471K3iZTmTOmYGwfg2zfLUvj/qBe5agJywba0aFwOwiWAEvPcDlnSxAh3v24j3ZWyA8YG5x11kvCdhZBN7RUDqvBDe54nVw8tDzZTv4Eryii4ipYQl2DlihIf7dRYhQkRNI=",
+  "Expiration" : "2026-07-17T07:21:59Z"
+}[ec2-user@ip-172-31-31-92 ~]$ 
+
+
+hxxx@xx:~/Ironhack/Week2/LM2_05/ce-lab-iam-roles-for-ec2$ # Step 1: request a short-lived session token (required by IMDSv2)
+TOKEN=$(curl -sX PUT "http://169.254.169.254/latest/api/token" \
+  -H "X-aws-ec2-metadata-token-ttl-seconds: 300")
+
+# Step 2: use the token to read the role's temporary credentials from the metadata service
+curl -sH "X-aws-ec2-metadata-token: $TOKEN" \
+  http://169.254.169.254/latest/meta-data/iam/security-credentials/ec2-s3-cloudwatch-role
+
+
+
+  hquddus@es037-nb:~/Ironhack/Week2/LM2_05/ce-lab-iam-roles-for-ec2$ # On your laptop. get-role returns the full role; --query extracts only the trust policy document
+aws iam get-role --role-name ec2-s3-cloudwatch-role \
+  --query 'Role.AssumeRolePolicyDocument'
+
+aws: [ERROR]: An error occurred (NoCredentials): Unable to locate credentials. You can configure credentials by running "aws login".
+hquddus@es037-nb:~/Ironhack/Week2/LM2_05/ce-lab-iam-roles-for-ec2$ 

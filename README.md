@@ -2,12 +2,12 @@
 
 **Repository:** [https://github.com/cloud-engineering-bootcamp/ce-lab-iam-roles-for-ec2](https://github.com/cloud-engineering-bootcamp/ce-lab-iam-roles-for-ec2)
 
-**Activity Type:** Individual  
+**Activity Type:** Individual
 **Estimated Time:** 45-60 minutes
 
 ## Learning Objectives
 
-- [ ] Create an IAM role with an EC2 trust relationship
+- [X] Create an IAM role with an EC2 trust relationship
 - [ ] Write a least-privilege policy scoped to specific resources
 - [ ] Assign an IAM role to a running EC2 instance
 - [ ] Test AWS API access using temporary role credentials
@@ -15,9 +15,9 @@
 
 ## Prerequisites
 
-- [ ] Completed Lab M2.01 (EC2 instance running, Amazon Linux 2023)
-- [ ] SSH access to your instance
-- [ ] IAM permissions to create roles and policies
+- [X] Completed Lab M2.01 (EC2 instance running, Amazon Linux 2023)
+- [X] SSH access to your instance
+- [X] IAM permissions to create roles and policies
 
 ---
 
@@ -36,6 +36,7 @@ Your application needs to read and write objects in one specific S3 bucket and s
 ## Your Task
 
 **What you'll create:**
+
 - An S3 bucket for the app to use
 - A custom IAM policy scoped to that one bucket
 - An IAM role trusted by EC2, with that policy plus CloudWatch access
@@ -97,13 +98,9 @@ If the bare bucket ARN is omitted, uploads succeed but `aws s3 ls` fails with `A
 ### Step 3: Create the Custom Policy
 
 1. **IAM Console** → **Policies** → **Create policy**
-
 2. Select the **JSON** tab and paste the policy from Step 2
-
 3. **Replace both occurrences** of `YOUR-BUCKET-NAME` with your real bucket name
-
 4. **Next** → **Policy name:** `ec2-s3-access-policy`
-
 5. **Create policy**
 
 **Expected outcome:** The policy appears in your Customer managed policies list.
@@ -113,21 +110,18 @@ If the bare bucket ARN is omitted, uploads succeed but `aws s3 ls` fails with `A
 ### Step 4: Create the IAM Role
 
 1. **IAM Console** → **Roles** → **Create role**
-
 2. **Trusted entity type:** AWS service
-
 3. **Use case:** **EC2** → **Next**
 
    > This designates the role as an EC2 role. AWS generates a **trust policy**
    > stating that the EC2 service is permitted to assume this role. This file is
    > required for your submission; see Step 9.
-
+   >
 4. **Add permissions** - tick both:
+
    - `CloudWatchAgentServerPolicy` (AWS managed)
    - `ec2-s3-access-policy` (the one you just made)
-
 5. **Next** → **Role name:** `ec2-s3-cloudwatch-role`
-
 6. **Create role**
 
 **Expected outcome:** The role exists with exactly two policies attached.
@@ -176,9 +170,7 @@ Verifies exactly the two required policies are attached to the role - no more, n
 ### Step 5: Attach the Role to Your Instance
 
 1. **EC2 Console** → **Instances** → select your instance
-
 2. **Actions** → **Security** → **Modify IAM role**
-
 3. Select `ec2-s3-cloudwatch-role` → **Update IAM role**
 
 **Expected outcome:** The instance's Details tab shows the IAM role. No reboot or reconnect is needed - it takes effect within seconds.
@@ -214,6 +206,7 @@ ls -la ~/.aws/ 2>/dev/null || echo "No ~/.aws directory."
 > **If `~/.aws/credentials` exists, delete it.** Static credentials take
 > precedence over the instance role and will override it. With static credentials
 > present, the tests would pass without exercising the role.
+>
 > ```bash
 > rm -f ~/.aws/credentials
 > ```
@@ -230,6 +223,7 @@ aws sts get-caller-identity
 ```
 
 **Expected output** - note `assumed-role`, not `user`:
+
 ```json
 {
     "UserId": "AROA...:i-0abc123",
@@ -266,6 +260,20 @@ aws s3 cp test.txt s3://YOUR-BUCKET-NAME/
 
 # Can I read it back?
 aws s3 cp s3://YOUR-BUCKET-NAME/test.txt -
+
+
+
+# Output
+
+[ec2-user@ip-172-31-31-92 ~]$ aws s3 ls s3://ce-bootcamp-m2-05-hafiz/
+2026-07-16 23:29:14         41 test.txt
+[ec2-user@ip-172-31-31-92 ~]$ aws s3 cp test.txt s3://ce-bootcamp-m2-05-hafiz
+upload: ./test.txt to s3://ce-bootcamp-m2-05-hafiz/test.txt     
+[ec2-user@ip-172-31-31-92 ~]$ aws s3 cp test.txt s3://ce-bootcamp-m2-05-hafiz
+upload: ./test.txt to s3://ce-bootcamp-m2-05-hafiz/test.txt     
+[ec2-user@ip-172-31-31-92 ~]$ aws s3 cp s3://ce-bootcamp-m2-05-hafiz/test.txt -
+written by an IAM role, no keys involved
+[ec2-user@ip-172-31-31-92 ~]$ 
 ```
 
 **Expected outcome:** All succeed, and you never typed a credential.
@@ -393,23 +401,24 @@ curl -sH "X-aws-ec2-metadata-token: $TOKEN" \
 Create a **public** GitHub repository named `ce-lab-iam-roles-ec2` containing:
 
 1. **IAM Policy Files:**
+
    - `s3-cloudwatch-policy.json` (your custom IAM policy)
    - `trust-policy.json` (EC2 assume role policy)
-
 2. **Test Output:**
+
    - `aws-test-commands.txt` (commands you ran and their output)
    - `s3-test-output.txt` (S3 upload test results)
    - `access-denied-test.txt` (proof least privilege works)
-
 3. **Screenshots** (in `screenshots/` folder):
+
    - IAM role creation in console
    - Policy attachment
    - EC2 instance with role attached
    - `aws sts get-caller-identity` showing assumed role
    - Successful S3 file upload
    - `AccessDenied` on a bucket you did not grant
-
 4. **Documentation** (`README.md`):
+
    - Why IAM roles are better than access keys
    - Step-by-step process
    - Policy explanation (what you granted and why)
@@ -417,6 +426,7 @@ Create a **public** GitHub repository named `ce-lab-iam-roles-ec2` containing:
    - Any troubleshooting steps
 
 **Structure:**
+
 ```
 ce-lab-iam-roles-ec2/
 ├── README.md
@@ -472,6 +482,7 @@ ce-lab-iam-roles-ec2/
 **Cause:** Static credentials on the instance are overriding the role. Someone ran `aws configure`.
 
 **Solution:**
+
 ```bash
 rm -f ~/.aws/credentials
 aws sts get-caller-identity     # should now show assumed-role/...
@@ -482,6 +493,7 @@ aws sts get-caller-identity     # should now show assumed-role/...
 ### Issue 3: "Unable to locate credentials"
 
 **Causes:**
+
 1. The role is not actually attached to this instance
 2. You attached it to a *different* instance
 
@@ -546,10 +558,10 @@ Before submitting, verify that the following screenshots are present in the `scr
 
 ## Grading: 100 points
 
-| Criteria | Points |
-|----------|--------|
-| **IAM role creation** (correct EC2 trust relationship) | 25 |
-| **Policy configuration** (least privilege, both ARNs correct) | 30 |
-| **Testing and verification** (incl. proving AccessDenied) | 25 |
-| **Documentation and security analysis** | 20 |
-| **Total** | **100** |
+| Criteria                                                            | Points        |
+| ------------------------------------------------------------------- | ------------- |
+| **IAM role creation** (correct EC2 trust relationship)        | 25            |
+| **Policy configuration** (least privilege, both ARNs correct) | 30            |
+| **Testing and verification** (incl. proving AccessDenied)     | 25            |
+| **Documentation and security analysis**                       | 20            |
+| **Total**                                                     | **100** |

@@ -1,0 +1,13 @@
+[ec2-user@ip-172-31-31-92 ~]$ aws s3 ls s3://quddus-17-07-2026/
+
+An error occurred (AccessDenied) when calling the ListObjectsV2 operation: User: arn:aws:sts::203637464233:assumed-role/ec2-s3-cloudwatch-role/i-06c1e6c3e50545fa6 is not authorized to perform: s3:ListBucket on resource: "arn:aws:s3:::quddus-17-07-2026" because no identity-based policy allows the s3:ListBucket action
+[ec2-user@ip-172-31-31-92 ~]$ 
+
+
+[ec2-user@ip-172-31-31-92 ~]$ aws s3 rb s3://ce-bootcamp-m2-05-hafiz/ --force
+delete failed: s3://ce-bootcamp-m2-05-hafiz/test.txt An error occurred (AccessDenied) when calling the DeleteObject operation: User: arn:aws:sts::203637464233:assumed-role/ec2-s3-cloudwatch-role/i-06c1e6c3e50545fa6 is not authorized to perform: s3:DeleteObject on resource: "arn:aws:s3:::ce-bootcamp-m2-05-hafiz/test.txt" because no identity-based policy allows the s3:DeleteObject action
+
+remove_bucket failed: Unable to delete all objects in the bucket, bucket will not be deleted.
+[ec2-user@ip-172-31-31-92 ~]$ 
+
+
